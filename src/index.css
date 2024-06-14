@@ -1,0 +1,28 @@
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@100..800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+    font-family: "Playpen Sans", cursive;
+}
+
+
+
+table th,
+table td {
+    padding: 5px;
+    border: 1px solid #ddd;
+    word-wrap: break-word;
+}
+
+tr,
+th {
+    min-width: 100px;
+    transition: all 0.3s;
+}
+
+tr:hover {
+    background-color: #5d5d5d26;
+}
