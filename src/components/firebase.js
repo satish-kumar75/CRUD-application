@@ -2,9 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyAJNz1iQOlr1VLDXUvN8uNm7LRuQ4cF3fU",
+  apiKey: import.meta.env.VITE_APP_FIREBASE_KEY,
   authDomain: "pan-details.firebaseapp.com",
   projectId: "pan-details",
   storageBucket: "pan-details.appspot.com",
