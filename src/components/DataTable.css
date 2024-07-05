@@ -1,0 +1,68 @@
+.add-container {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.table-container {
+    max-width: 100%;
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+}
+
+input[type="text"],
+input[type="date"] {
+    padding: 8px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    width: fit-content;
+    color: black;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+thead {
+    background-color: #38a169;
+}
+
+td {
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #2f855a;
+}
+
+.pagination {
+    margin-top: 24px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.pagination button {
+    width: 24px;
+    text-align: center;
+    border-radius: 4px;
+}
