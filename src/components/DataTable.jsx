@@ -9,9 +9,8 @@ import {
   Trash2,
   Edit2,
   Plus,
-  TrendingUp,
-  UserPlus,
   AlertCircle,
+  TrendingUp 
 } from "lucide-react";
 import {
   addDoc,
@@ -88,6 +87,13 @@ const DataTable = () => {
       formData.aadhaar &&
       formData.dob
     ) {
+      // Check if Aadhaar number already exists
+      const isDuplicate = data.some(item => item.aadhaar === formData.aadhaar);
+      if (isDuplicate) {
+        alert("This Aadhaar number already exists. Please check and try again.");
+        return;
+      }
+
       const newData = {
         customId: getNextId(),
         name: formData.name,
@@ -268,97 +274,99 @@ const DataTable = () => {
           )}
 
           {/* Table */}
-          <table className="card w-full border-collapse rounded-xl mb-6">
-            <thead className="bg-gray-300">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Mobile
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Coupon
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Aadhaar
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  DOB
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {filteredData.map((item) => (
-                <tr key={item.id} className="hover:bg-zinc-700 cursor-pointer">
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
-                    contentEditable={editId === item.id}
-                    onBlur={(e) =>
-                      handleEdit(item.id, { name: e.target.innerText })
-                    }
-                  >
-                    {item.name}
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
-                    contentEditable={editId === item.id}
-                    onBlur={(e) =>
-                      handleEdit(item.id, { mobile: e.target.innerText })
-                    }
-                  >
-                    {item.mobile}
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
-                    contentEditable={editId === item.id}
-                    onBlur={(e) =>
-                      handleEdit(item.id, { coupon: e.target.innerText })
-                    }
-                  >
-                    {item.coupon}
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
-                    contentEditable={editId === item.id}
-                    onBlur={(e) =>
-                      handleEdit(item.id, { aadhaar: e.target.innerText })
-                    }
-                  >
-                    {item.aadhaar}
-                  </td>
-                  <td
-                    className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
-                    contentEditable={editId === item.id}
-                    onBlur={(e) =>
-                      handleEdit(item.id, { dob: e.target.innerText })
-                    }
-                  >
-                    {item.dob}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setEditId(item.id)}
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      >
-                        <Edit2 className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(item.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </td>
+          <div className="w-full overflow-x-auto">
+            <table className="card w-full border-collapse rounded-xl mb-6 min-w-[800px]">
+              <thead className="bg-gray-300">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Mobile
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Coupon
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Aadhaar
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    DOB
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {filteredData.map((item) => (
+                  <tr key={item.id} className="hover:bg-zinc-700 cursor-pointer">
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
+                      contentEditable={editId === item.id}
+                      onBlur={(e) =>
+                        handleEdit(item.id, { name: e.target.innerText })
+                      }
+                    >
+                      {item.name}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
+                      contentEditable={editId === item.id}
+                      onBlur={(e) =>
+                        handleEdit(item.id, { mobile: e.target.innerText })
+                      }
+                    >
+                      {item.mobile}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
+                      contentEditable={editId === item.id}
+                      onBlur={(e) =>
+                        handleEdit(item.id, { coupon: e.target.innerText })
+                      }
+                    >
+                      {item.coupon}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
+                      contentEditable={editId === item.id}
+                      onBlur={(e) =>
+                        handleEdit(item.id, { aadhaar: e.target.innerText })
+                      }
+                    >
+                      {item.aadhaar}
+                    </td>
+                    <td
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-50"
+                      contentEditable={editId === item.id}
+                      onBlur={(e) =>
+                        handleEdit(item.id, { dob: e.target.innerText })
+                      }
+                    >
+                      {item.dob}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setEditId(item.id)}
+                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        >
+                          <Edit2 className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        >
+                          <Trash2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           {/* Pagination */}
           <div className="flex justify-center items-center gap-4">
