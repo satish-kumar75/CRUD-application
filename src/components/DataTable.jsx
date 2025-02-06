@@ -22,6 +22,8 @@ import {
   doc,
   deleteDoc,
   updateDoc,
+  query,
+  where,
 } from "firebase/firestore";
 import { db } from "./firebase";
 import toast from "react-hot-toast";
@@ -60,6 +62,45 @@ const DataTable = () => {
   const [globalFilter, setGlobalFilter] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
+  const getTodayEntries = (data) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return data.filter((item) => {
+      if (!item.createdAt) return false;
+      
+      // Handle both Timestamp and Date objects
+      const creationDate = item.createdAt.toDate ? 
+        item.createdAt.toDate() : // If it's a Firestore Timestamp
+        new Date(item.createdAt); // If it's a regular Date
+
+      creationDate.setHours(0, 0, 0, 0);
+      return creationDate.getTime() === today.getTime();
+    }).length;
+  };
+
+  const fetchTodayEntries = async () => {
+    try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+
+      const q = query(
+        collection(db, "pandetails"),
+        where("createdAt", ">=", today),
+        where("createdAt", "<", tomorrow)
+      );
+
+      const querySnapshot = await getDocs(q);
+      console.log("Today's entries count:", querySnapshot.size);
+      return querySnapshot.size;
+    } catch (error) {
+      console.error("Error fetching today's entries:", error);
+      return 0;
+    }
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -71,9 +112,19 @@ const DataTable = () => {
             id: doc.id,
             ...data,
             dob: data.dob ? data.dob.toDate().toLocaleDateString("en-GB") : "",
+            createdAt: data.createdAt ? data.createdAt : null,
           };
         });
-        setData(firebaseData);
+
+        // Sort data by createdAt in descending order (newest first)
+        const sortedData = firebaseData.sort((a, b) => {
+          if (!a.createdAt || !b.createdAt) return 0;
+          const dateA = a.createdAt.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+          const dateB = b.createdAt.toDate ? b.createdAt.toDate() : new Date(b.createdAt);
+          return dateB - dateA;
+        });
+
+        setData(sortedData);
       } catch (error) {
         toast.error("Failed to fetch data");
       } finally {
@@ -83,10 +134,23 @@ const DataTable = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    console.log("Today's entries:", data.filter(item => {
+      if (!item.createdAt) return false;
+      
+      const creationDate = item.createdAt.toDate ? 
+        item.createdAt.toDate() : 
+        new Date(item.createdAt);
+        
+      const today = new Date();
+      return creationDate.getDate() === today.getDate() &&
+             creationDate.getMonth() === today.getMonth() &&
+             creationDate.getFullYear() === today.getFullYear();
+    }));
+  }, [data]);
+
   const totalEntries = data.length;
-  const todayEntries = data.filter(
-    (item) => new Date(item.dob).toDateString() === new Date().toDateString()
-  ).length;
+  const todayEntries = getTodayEntries(data);
   const recentEntries = data.slice(-5);
 
   const getNextId = () => {
@@ -155,16 +219,21 @@ const DataTable = () => {
           coupon: formData.coupon,
           aadhaar: formData.aadhaar,
           dob: new Date(formData.dob),
+          createdAt: new Date(),
         };
         const docRef = await addDoc(collection(db, "pandetails"), newData);
+        
+        // Add new entry at the beginning of the array
         setData([
-          ...data,
           {
             id: docRef.id,
             ...newData,
             dob: newData.dob.toLocaleDateString("en-GB"),
+            createdAt: newData.createdAt,
           },
+          ...data,
         ]);
+        
         setFormData({ name: "", mobile: "", coupon: "", aadhaar: "", dob: "" });
         setShowForm(false);
         toast.success("Record added successfully!");
