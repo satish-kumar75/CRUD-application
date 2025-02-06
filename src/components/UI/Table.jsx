@@ -108,7 +108,7 @@ const Table = ({
                   <td
                     key={cell.id}
                     data-cell-id={cell.id}
-                    className="px-3 sm:px-6 py-1 sm:py-4 whitespace-nowrap text-[11px] sm:text-sm text-slate-300"
+                    className="px-3 sm:px-6 py-1 sm:py-4 uppercase whitespace-nowrap text-[11px] sm:text-sm text-slate-300"
                     contentEditable={
                       editId === row.original.id &&
                       !["actions"].includes(cell.column.id)
