@@ -2,8 +2,50 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Users, Phone, Ticket, CreditCard, Calendar } from "lucide-react";
 import Button from "./UI/Button";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import dayjs from 'dayjs';
 
 const AddForm = ({ formData, handleFormData, handleFormSubmit }) => {
+  // Custom dark theme for MUI DatePicker
+  const darkTheme = createTheme({
+    palette: {
+      mode: 'dark',
+    },
+    components: {
+      MuiTextField: {
+        styleOverrides: {
+          root: {
+            width: '100%',
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: 'rgba(30, 41, 59, 0.5)',
+              '& fieldset': {
+                borderColor: 'rgba(51, 65, 85, 0.5)',
+              },
+              '&:hover fieldset': {
+                borderColor: '#ffffff',
+              },
+              '&.Mui-focused fieldset': {
+                borderColor: '#ffffff',
+              },
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const handleDateChange = (date) => {
+    handleFormData({
+      target: {
+        name: 'dob',
+        value: date ? date.format('YYYY-MM-DD') : ''
+      }
+    });
+  };
+
   // Update input classes
   const inputClasses =
     "w-full pl-10 pr-4 py-2 rounded-lg border bg-slate-800/50 border-slate-700/50 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-slate-200 placeholder-slate-500 transition-colors";
@@ -39,16 +81,30 @@ const AddForm = ({ formData, handleFormData, handleFormSubmit }) => {
         <Ticket className={iconClasses} />
       </div>
       <div className="relative">
-        <input
-          className={inputClasses}
-          type="date"
-          placeholder="Date of Birth"
-          name="dob"
-          value={formData.dob}
-          onChange={handleFormData}
-          required
-        />
-        <Calendar className={iconClasses} />
+        <ThemeProvider theme={darkTheme}>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              value={formData.dob ? dayjs(formData.dob) : null}
+              onChange={handleDateChange}
+              format="DD/MM/YYYY"
+              slotProps={{
+                textField: {
+                  required: true,
+                  placeholder: "Date of Birth",
+                  sx: {
+                    '& .MuiInputBase-input': {
+                      paddingLeft: '2.5rem',
+                      paddingTop: '0.6rem', 
+                      paddingBottom: '0.6rem',
+                      color: '#e2e8f0',
+                    },
+                  },
+                },
+              }}
+            />
+          </LocalizationProvider>
+        </ThemeProvider>
+        <Calendar className={iconClasses} style={{ zIndex: 1 }} />
       </div>
       <div className="relative">
         <input
